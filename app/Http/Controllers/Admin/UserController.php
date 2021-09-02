@@ -12,6 +12,8 @@ use App\Http\Requests\UserRequest;
 
 use Spatie\Permission\Models\Role;
 
+use Carbon\Carbon;
+
 class UserController extends Controller
 {
     /**
@@ -48,6 +50,19 @@ class UserController extends Controller
 
         if (! Gate::allows('user.create')) {
             return abort(401);
+        }
+
+        $get_year_old = new User;
+
+        if($get_year_old->getAge($request->input('birth_date')) < 18)
+        {
+            $notification = array(
+                'message'    => 'Debe ser mayor de edad',
+                'alert_type' => 'warning',);
+    
+            \Session::flash('notification', $notification);
+
+            return back()->withInput()->withErrors(['birth_date', 'Debe ser mayor de edad']);
         }
 
         $user = User::create($request->all());
@@ -98,6 +113,19 @@ class UserController extends Controller
             return abort(401);
         }
 
+        $get_year_old = new User;
+
+        if($get_year_old->getAge($request->input('birth_date')) < 18)
+        {
+            $notification = array(
+                'message'    => 'Debe ser mayor de edad',
+                'alert_type' => 'warning',);
+    
+            \Session::flash('notification', $notification);
+
+            return back()->withInput()->withErrors(['birth_date', 'Debe ser mayor de edad']);
+        }
+
         $user = User::findOrFail($id);
 
         $user->fill($request->except(['identification','email']))->save();
@@ -121,7 +149,12 @@ class UserController extends Controller
             return abort(401);
         }
 
-        User::findOrFail($id)->delete();
+        $user = User::findOrFail($id);
+
+        if ($user->name != 'Admin') {
+           $user->delete();
+        }
+        
         return response(null, 204);
     }
 
@@ -131,13 +164,20 @@ class UserController extends Controller
 
         return Datatables::of($query)->addColumn('action', function ($dat) {
 
-            return ' <a href="'.route("admin.users.show", $dat->id).'" class="btn btn-sm btn-primary"><i class="fas fa-eye" title="Show: '.$dat->name.'"></i></a>
+            $btn_delete = '<button class="btn btn-sm btn-danger btn-delete" title="delete '.$dat->name.'" data-remote="'.route("admin.users.destroy", $dat->id).'"><i class="far fa-trash-alt"></i></button> ';
+            if ($dat->name == 'Admin') {
+                $btn_delete = '';
+            }
 
-                <a href="'.route("admin.users.edit", $dat->id).'" class="btn btn-sm btn-secondary"><i class="far fa-edit" title="Edit: '.$dat->name.'"></i></a>
-                <button class="btn btn-sm btn-danger btn-delete" title="delete '.$dat->name.'" data-remote="'.route("admin.users.destroy", $dat->id).'"><i class="far fa-trash-alt"></i></button> ';
+            return ' <a href="'.route("admin.users.show", $dat->id).'" class="btn btn-sm btn-primary"><i class="fas fa-eye" title="Show: '.$dat->name.'"></i></a>
+                <a href="'.route("admin.users.edit", $dat->id).'" class="btn btn-sm btn-secondary"><i class="far fa-edit" title="Edit: '.$dat->name.'"></i></a> '
+                .$btn_delete;
         })
         ->addColumn('role', function ($user) {
             return  ucfirst($user->roles->first()->name);
+        })
+        ->addColumn('year_old', function ($user) {
+            return  Carbon::parse($user->birth_date)->age;
         })
         ->editColumn('created_at', function ($users){
             return date('d-m-y', strtotime($users->created_at) );
@@ -145,7 +185,13 @@ class UserController extends Controller
         ->filterColumn('created_at', function ($query, $keyword) {
             $query->whereRaw("DATE_FORMAT(users.created_at,'%m/%d/%y') like ?", ["%$keyword%"]);
         })
-        ->rawColumns(['action','role'])
+        ->editColumn('birth_date', function ($users){
+            return date('d-m-y', strtotime($users->birth_date) );
+        })
+        ->filterColumn('birth_date', function ($query, $keyword) {
+            $query->whereRaw("DATE_FORMAT(users.birth_date,'%m/%d/%y') like ?", ["%$keyword%"]);
+        })
+        ->rawColumns(['action','year_old','role'])
         ->make(true);
     }
 }

@@ -24,17 +24,36 @@ class PermissionsTableSeeder extends Seeder
         Permission::create(['name' => 'clients.create']);
         Permission::create(['name' => 'clients.destroy']);
 
+        Permission::create(['name' => 'mails.index']);
+        Permission::create(['name' => 'mails.edit']);
+        Permission::create(['name' => 'mails.show']);
+        Permission::create(['name' => 'mails.create']);
+        Permission::create(['name' => 'mails.destroy']);
+
         Permission::create(['name' => 'users.index']);
         Permission::create(['name' => 'users.edit']);
         Permission::create(['name' => 'users.show']);
         Permission::create(['name' => 'users.create']);
         Permission::create(['name' => 'users.destroy']);
 
+        // Cretae role
         //Admin
         $admin = Role::create(['name' => 'super_admin']);
 
-        //Guest
+        //Client
         $guest = Role::create(['name' => 'client']);
+
+         //Operator
+        $ope = Role::create(['name' => 'operator']);
+
+        //assignament permission to role
+        $guest->givePermissionTo([
+            'mails.index',
+            'mails.edit',
+            'mails.show',
+            'mails.create',
+            'mails.destroy',
+        ]);
 
          //User Admin
          $user = User::find(1); 

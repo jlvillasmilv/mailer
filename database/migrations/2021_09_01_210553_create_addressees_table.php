@@ -15,8 +15,11 @@ class CreateAddresseesTable extends Migration
     {
         Schema::create('addressees', function (Blueprint $table) {
             $table->id();
-           
-
+            $table->foreignId('user_id')
+            ->constrained('users')
+            ->onDelete("cascade")
+            ->onUpdate("cascade");
+            $table->string('email');
             $table->timestamps();
         });
     }

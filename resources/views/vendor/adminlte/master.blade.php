@@ -73,7 +73,9 @@
 
 </head>
 
-<body class="@yield('classes_body')" @yield('body_data')>
+<body class="@yield('classes_body')" @yield('body_data') id="page-top" {{ Session::has('notification') ? 'data-notification' : '' }} 
+data-notification-type="{{  Session::has('notification') ? Session::get('notification')['alert_type'] : '' }}" 
+data-notification-message="{{ Session::has('notification') ? json_encode(Session::get('notification')['message']) : '' }}">
 
     {{-- Body Content --}}
     @yield('body')
@@ -100,7 +102,8 @@
             <livewire:scripts />
         @endif
     @endif
-
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="{{ asset('vendor/main.js')}}"></script>
     {{-- Custom Scripts --}}
     @yield('adminlte_js')
 

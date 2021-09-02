@@ -8,6 +8,9 @@ use App\Models\User;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Http\Request;
+
+use Illuminate\Auth\Events\Registered;
 
 class RegisterController extends Controller
 {
@@ -49,10 +52,15 @@ class RegisterController extends Controller
      */
     protected function validator(array $data)
     {
+
         return Validator::make($data, [
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'name'        => ['required', 'string', 'max:255'],
+            'identification' => ['required', 'string', 'max:11'],
+            'cell_phone' => ['required', 'max:10'],
+            'city_code'   => ['nullable', 'numeric'],
+            'birth_date'  => ['required', 'date'],
+            'email'       => ['required', 'string', 'email', 'max:255', 'unique:users'],
+            'password'    => ['required', 'string', 'min:6', 'max:10', 'confirmed'],
         ]);
     }
 
@@ -64,10 +72,53 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
+
         return User::create([
-            'name' => $data['name'],
-            'email' => $data['email'],
-            'password' => Hash::make($data['password']),
+            'name'          => $data['name'],
+            'identification' => $data['identification'],
+            'cell_phone'    => $data['cell_phone'],
+            'city_code'     => $data['city_code'],
+            'birth_date'    => $data['birth_date'],
+            'email'         => $data['email'],
+            'password'      => Hash::make($data['password']),
         ]);
+
+    }
+
+    /**
+     *
+     * Override Trait RegistersUsers : vendor/laravel/framework/src/Illuminate/Foundation/Auth/RegistersUsers.php
+     *
+    */
+    public function register(Request $request)
+    {
+
+        $get_year_old = new User;
+
+        if($get_year_old->getAge($request->input('birth_date')) < 18)
+        {
+            $notification = array(
+                'message'    => 'Debe ser mayor de edad',
+                'alert_type' => 'warning',);
+    
+            \Session::flash('notification', $notification);
+
+            return back()->withInput()->withErrors(['birth_date', 'Debe ser mayor de edad']);
+        }
+
+        $validator = $this->validator($request->all());
+
+        if ($validator->fails()) {
+            return redirect('/register')
+            ->withErrors($validator)
+            ->withInput();
+        }
+        
+        event(new Registered($user = $this->create($request->all())));
+
+        $this->guard()->login($user);
+
+        return $this->registered($request, $user)
+                    ?: redirect($this->redirectPath());
     }
 }

@@ -23,8 +23,21 @@ class MailRequest extends FormRequest
      */
     public function rules()
     {
+        $rules = [
+            'email'    => 'required|email|max:100',         
+            'subject'  => 'required|max:200', 
+            'body'     => 'required',            
+        ];
+
+        return $rules;
+    }
+
+    public function attributes()
+    {
         return [
-            //
+            'email'        => 'Correo',
+            'subject'      => 'Asunto',
+            'body'         => 'Contenido mensaje',
         ];
     }
 }

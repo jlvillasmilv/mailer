@@ -28,8 +28,9 @@ class UserRequest extends FormRequest
             'identification'   => 'required|max:11',
             'cell_phone'       => 'nullable|max:10',
             'city_code'        => 'nullable|numeric',
+            'birth_date'       => 'required|date',
             'email'            => 'required|email|max:100|unique:users,email,'.$this->user,         
-            'password'         => 'required',            
+            'password'         => 'required|min:8|max:10|',            
         ];
 
         return $rules;

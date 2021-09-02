@@ -21,6 +21,8 @@ class CreateMailsTable extends Migration
             ->onUpdate("cascade");
             $table->string('subject');
             $table->text('body');
+            $table->boolean('status')->default(false);
+            
             $table->timestamps();
             $table->softDeletes($column = 'deleted_at', $precision = 0);
         });

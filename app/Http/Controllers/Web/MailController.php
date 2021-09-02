@@ -3,8 +3,13 @@
 namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
-use App\Models\Mail;
+use App\Models\{Mail, Addressee};
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
+
+use App\Http\Requests\MailRequest;
+
+use Yajra\DataTables\Facades\DataTables;
 
 class MailController extends Controller
 {
@@ -15,7 +20,11 @@ class MailController extends Controller
      */
     public function index()
     {
-        //
+        if (! Gate::allows('mails.index')) {
+            return abort(401);
+        }
+
+        return view('mails.index');
     }
 
     /**
@@ -25,7 +34,11 @@ class MailController extends Controller
      */
     public function create()
     {
-        //
+        if (! Gate::allows('mails.create')) {
+            return abort(401);
+        }
+
+        return view('mails.form');
     }
 
     /**
@@ -34,9 +47,32 @@ class MailController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(MailRequest $request)
     {
-        //
+        if (! Gate::allows('mails.create')) {
+            return abort(401);
+        }
+        
+        $mail = new Mail;
+        $mail->fill($request->all());
+        $mail->user_id = auth()->user()->id;
+        $mail->save();
+
+        $addressee = Addressee::updateOrCreate(
+                ['email'     => $request->input('email'),
+                 'user_id'   => auth()->user()->id,
+                ]
+            );
+
+        $mail->mailAddress()->sync($addressee->id);
+
+        $notification = array(
+            'message'    => 'Correo enviado!',
+            'alert_type' => 'success',);
+
+            \Session::flash('notification', $notification);
+
+        return view('mails.index');
     }
 
     /**
@@ -47,7 +83,11 @@ class MailController extends Controller
      */
     public function show(Mail $mail)
     {
-        //
+        if (! Gate::allows('mails.show')) {
+            return abort(401);
+        }
+        
+        return view('mails.show', compact('mail'));
     }
 
     /**
@@ -81,6 +121,30 @@ class MailController extends Controller
      */
     public function destroy(Mail $mail)
     {
-        //
+        if (! Gate::allows('mails.destroy')) {
+            return abort(401);
+        }
+
+        Mail::findOrFail($id)->delete();
+        return response(null, 204);
+    }
+
+    public function table(Request $request)
+    {
+        $query = Mail::query();
+
+        return Datatables::of($query)->addColumn('action', function ($dat) {
+
+            return ' <a href="'.route("mails.show", $dat->id).'" class="btn btn-sm btn-primary"><i class="fas fa-eye" title="Show: '.$dat->name.'"></i></a>
+                <button class="btn btn-sm btn-danger btn-delete" title="delete '.$dat->name.'" data-remote="'.route("mails.destroy", $dat->id).'"><i class="far fa-trash-alt"></i></button> ';
+        })
+        ->editColumn('created_at', function ($users){
+            return date('d-m-y', strtotime($users->created_at) );
+        })
+        ->filterColumn('created_at', function ($query, $keyword) {
+            $query->whereRaw("DATE_FORMAT(users.created_at,'%m/%d/%y') like ?", ["%$keyword%"]);
+        })
+        ->rawColumns(['action'])
+        ->make(true);
     }
 }

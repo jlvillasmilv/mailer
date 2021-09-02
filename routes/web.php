@@ -22,9 +22,9 @@ Auth::routes();
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
 // Route for user send email
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::middleware(['auth'])->group(function () {
     Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-    Route::resource('mails', 'App\Http\Controllers\web\MailController');
+    Route::resource('mails', 'App\Http\Controllers\web\MailController')->except(['edit','update']);
     Route::get('table/mails', 'App\Http\Controllers\web\MailController@table')->name('mails.table');
 
 });

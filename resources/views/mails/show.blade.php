@@ -23,23 +23,6 @@
                 </tr>
                 <tr>
                     <th>
-                        Cedula
-                    </th>
-                    <td>
-                        {{ $user->identification }}
-                    </td>
-                </tr>
-
-                <tr>
-                    <th>
-                        Fecha de Nacimiento
-                    </th>
-                    <td>
-                        {{ $user->birth_date }}
-                    </td>
-                </tr>
-                <tr>
-                    <th>
                        Correo
                     </th>
                     <td>

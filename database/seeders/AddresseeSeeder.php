@@ -13,6 +13,6 @@ class AddresseeSeeder extends Seeder
      */
     public function run()
     {
-        //
+        \App\Models\Addressee::factory(25)->create();
     }
 }

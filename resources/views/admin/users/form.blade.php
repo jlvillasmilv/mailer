@@ -78,9 +78,7 @@
                                 class="form-control @error('cell_phone') is-invalid @enderror" value="{{ old('cell_phone', isset($data) ? $data->cell_phone : '') }}" >
                                
                                 @error('cell_phone')
-                                      <em class="invalid-feedback">
-                                          {{ $message }}
-                                      </em>
+                                       <span class="text-danger"> {{ $message }} </span>
                                 @enderror
                                
                             </div>
@@ -91,21 +89,16 @@
 
                             <div class="form-group ">
                                 <label for="birth_date">Fecha de nacimiento*</label>
-                                <input type="date" maxlength="10" id="birth_date" name="birth_date" 
+                                <input type="date" id="birth_date" name="birth_date" 
                                 class="form-control @error('birth_date') is-invalid @enderror"
-                                value='{{(isset($data)) && strtotime($data->birth_date) != false  ? date("Y-m-d", strtotime($data->birth_date)) : date("Y-m-d") }}' required=""
-                                 >
-                               
-                                @error('birth_date')
-                                      <em class="invalid-feedback">
-                                          {{ $message }}
-                                      </em>
-                                @enderror
+                                value='{{(isset($data)) && strtotime($data->birth_date) != false  ? date("Y-m-d", strtotime($data->birth_date)) : date("Y-m-d") }}' max="{{date("Y-m-d")}}" required >
                                
                             </div>
+                            @error('birth_date')
+                                <span class="text-danger"> {{ $message }} </span>
+                            @enderror
 
                         </div>
-
                         
                         <div class="col-4">
 
@@ -117,9 +110,7 @@
                                  >
                                
                                 @error('city_code')
-                                      <em class="invalid-feedback">
-                                          {{ $message }}
-                                      </em>
+                                       <span class="text-danger"> {{ $message }} </span>
                                 @enderror
                                
                             </div>
@@ -127,17 +118,13 @@
                         </div>
                     </div>
 
-                  
-
 
                       <div class="form-group">
                           <label for="password">Contraseña</label>
                           <input type="password" id="password" name="password" class="form-control @error('password') is-invalid @enderror">
 
                           @error('password')
-                                <em class="invalid-feedback">
-                                    {{ $message }}
-                                </em>
+                            <span class="text-danger"> {{ $message }} </span>
                           @enderror
 
                          
@@ -155,9 +142,7 @@
                           </select>
                          
                           @error('roles')
-                                <em class="invalid-feedback">
-                                    {{ $message }}
-                                </em>
+                          <span class="text-danger"> {{ $message }} </span>
                           @enderror
                          
                       </div>

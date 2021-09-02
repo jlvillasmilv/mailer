@@ -10,7 +10,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 
-class User extends Authenticatable implements MustVerifyEmail
+use Carbon\Carbon;
+
+class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable, HasRoles;
     use SoftDeletes;
@@ -58,5 +60,11 @@ class User extends Authenticatable implements MustVerifyEmail
     public function mails()
     {
         return $this->hasMany(Mail::class,'user_id');
+    }
+
+    public function getAge($birth_date)
+    {
+        $year_old = Carbon::parse($birth_date)->age;
+        return $year_old;
     }
 }

@@ -10,9 +10,9 @@
     <div class="card mt-3">
         <div class="card-header">
         
-        Listado Usuarios
-        @can('users.create')
-        <a  href="{{ route('admin.users.create') }}"  class="d-sm-inline-block btn btn-sm btn-success shadow-sm float-right ml-2"><i class="fas fa-plus fa-lg text-white-50"></i> Nuevo </a>
+         Correos enviados
+        @can('mails.create')
+        <a  href="{{ route('mails.create') }}"  class="d-sm-inline-block btn btn-sm btn-success shadow-sm float-right ml-2"><i class="fas fa-plus fa-lg text-white-50"></i> Redactar </a>
         @endcan
         </div>
                 
@@ -21,16 +21,9 @@
                 <table id="table" class=" table table-bordered table-striped table-hover datatable">
                     <thead>
                     <tr class="text-center">
-                        <th>N°</th>
-                        <th>Nombre</th>
-                        <th>Cedula</th>
-                        <th>Fecha nacimiento</th>
-                        <th>Edad</th>
-                        <th>N° Telf</th>
-                        <th>Codigo Ciudad</th>
-                        <th>Correo </th>
-                        <th>Fecha Registro</th>
-                        <th>Rol</th>
+                        <th>Para</th>
+                        <th>Asunto </th>
+                        <th>Fecha envio</th>
                         <th>&nbsp; </th>
                     </tr>
                     </thead>
@@ -63,20 +56,13 @@
                 serverSide: true,
                 responsive: true,
                 ajax: {
-                        "url":  '{{ route("admin.users.table") }}',
+                        "url":  '{{ route("mails.table") }}',
                         "type": "get"
                         },
                 columns: [
                     {data: 'id', name: 'id'},
-                    {data: 'name', name: 'name'},
-                    {data: 'identification', name: 'identification'},
-                    {data: 'birth_date', name: 'birth_date'},
-                    {data: 'year_old', name: 'year_old'},
-                    {data: 'cell_phone', name: 'cell_phone'},
-                    {data: 'city_code', name: 'city_code'}, 
-                    {data: 'email', name: 'email'},
+                    {data: 'subject', name: 'subject'},
                     {data: 'created_at', name: 'created_at'},
-                    {data: 'role', name: 'role'},
                     {data: 'action', name: 'action', orderable: false, searchable: false, "width": "15%", "class": "text-center" },
                 ]
             }).on('search.dt', function() {

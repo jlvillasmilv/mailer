@@ -13,10 +13,15 @@
 
 @section('auth_header', __('adminlte::adminlte.register_message'))
 
+
 @section('auth_body')
     <form action="{{ $register_url }}" method="post">
         {{ csrf_field() }}
 
+        
+        @if($errors->any())
+        {!! implode('', $errors->all('<div class="invalid-feedback"> <strong>:message</strong> </div>')) !!}
+        @endif
         {{-- Name field --}}
         <div class="input-group mb-3">
             <input type="text" name="name" class="form-control {{ $errors->has('name') ? 'is-invalid' : '' }}"
@@ -29,6 +34,66 @@
             @if($errors->has('name'))
                 <div class="invalid-feedback">
                     <strong>{{ $errors->first('name') }}</strong>
+                </div>
+            @endif
+        </div>
+
+        <div class="input-group mb-3">
+            <input type="text" name="identification" class="form-control {{ $errors->has('identification') ? 'is-invalid' : '' }}"
+                   value="{{ old('identification') }}" placeholder="Cedula" maxlength="11">
+            <div class="input-group-append">
+                <div class="input-group-text">
+                    <span class="fa fa-id-card {{ config('adminlte.classes_auth_icon', '') }}"></span>
+                </div>
+            </div>
+            @if($errors->has('identification'))
+                <div class="invalid-feedback">
+                    <strong>{{ $errors->first('identification') }}</strong>
+                </div>
+            @endif
+        </div>
+
+        <div class="input-group mb-3">
+            <input type="text" name="cell_phone" class="form-control {{ $errors->has('cell_phone') ? 'is-invalid' : '' }}"
+                   value="{{ old('cell_phone') }}" placeholder="Numero de telefono" maxlength="10">
+            <div class="input-group-append">
+                <div class="input-group-text">
+                    <span class="fa fa-phone {{ config('adminlte.classes_auth_icon', '') }}"></span>
+                </div>
+            </div>
+            @if($errors->has('cell_phone'))
+                <div class="invalid-feedback">
+                    <strong>{{ $errors->first('cell_phone') }}</strong>
+                </div>
+            @endif
+        </div>
+
+        <div class="input-group mb-3">
+            <input type="date" name="birth_date" class="form-control {{ $errors->has('birth_date') ? 'is-invalid' : '' }}"
+                   value="{{ old('birth_date') }}" placeholder="Fecha de nacimiento" max="{{date("Y-m-d")}}">
+            {{-- <div class="input-group-append">
+                <div class="input-group-text">
+                    <span class="fa fa-id-card {{ config('adminlte.classes_auth_icon', '') }}"></span>
+                </div>
+            </div> --}}
+            @if($errors->has('birth_date'))
+                <div class="invalid-feedback">
+                    <strong>{{ $errors->first('birth_date') }}</strong>
+                </div>
+            @endif
+        </div>
+
+        <div class="input-group mb-3">
+            <input type="number" name="city_code" class="form-control {{ $errors->has('city_code') ? 'is-invalid' : '' }}"
+                   value="{{ old('city_code') }}" placeholder="Codigo ciudad" max="999999">
+            <div class="input-group-append">
+                <div class="input-group-text">
+                    <span class="fa fa-map-marker {{ config('adminlte.classes_auth_icon', '') }}"></span>
+                </div>
+            </div>
+            @if($errors->has('city_code'))
+                <div class="invalid-feedback">
+                    <strong>{{ $errors->first('city_code') }}</strong>
                 </div>
             @endif
         </div>

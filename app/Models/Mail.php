@@ -12,14 +12,17 @@ class Mail extends Model
     protected $fillable = [
         'user_id',
         'status',
-        'contract_status',
-        'disbursement_status',
-        'observation',
-        'description'
+        'subject',
+        'body',
     ];
 
     public function addressees()
     {
         return $this->hasMany(Addressee::class,'mail_id');
+    }
+
+    public function mailAddress()
+    {
+        return $this->belongsToMany(Mail::class, 'addressees_mails', 'mail_id', 'addressee_id');
     }
 }
