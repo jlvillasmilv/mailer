@@ -2,7 +2,7 @@
 
 @section('content')
 
- <div class="card">
+ <div class="card mt-2">
       <div class="card-header">
           {{isset($data->id) ?  'Actualizacion' :'Registro'}} Mensaje Nuevo
           <a class=" float-right" data-toggle="tooltip" data-placement="right" title="Regresar listado" href="{{ route('mails.index') }}" ><i class="fas fa-undo-alt" aria-hidden="true"></i></a>
@@ -64,7 +64,7 @@
                       </div>
 
                       <div class="mt-2">
-                          <input class="btn btn-primary mt-1" type="submit" value=" {{isset($data->id) ?  'Actualizar' :'Guardar'}}">
+                          <input class="btn btn-primary mt-1" type="submit" value="Enviar">
                       </div>
                   </form>
               </div>

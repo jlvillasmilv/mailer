@@ -23,6 +23,7 @@
                     <tr class="text-center">
                         <th>Para</th>
                         <th>Asunto </th>
+                        <th>Status</th>
                         <th>Fecha envio</th>
                         <th>&nbsp; </th>
                     </tr>
@@ -60,8 +61,9 @@
                         "type": "get"
                         },
                 columns: [
-                    {data: 'id', name: 'id'},
+                    {data: 'email', name: 'email'},
                     {data: 'subject', name: 'subject'},
+                    {data: 'status', name: 'status'},
                     {data: 'created_at', name: 'created_at'},
                     {data: 'action', name: 'action', orderable: false, searchable: false, "width": "15%", "class": "text-center" },
                 ]

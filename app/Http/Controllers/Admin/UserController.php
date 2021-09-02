@@ -16,6 +16,13 @@ use Carbon\Carbon;
 
 class UserController extends Controller
 {
+     /**
+        * @author Jorge Villasmil.
+        *
+        *Controller management users register
+        * CRUD Users 
+    */
+
     /**
      * Display a listing of the resource.
      *
@@ -158,6 +165,13 @@ class UserController extends Controller
         return response(null, 204);
     }
 
+    /**
+        * @author Jorge Villasmil.
+        *
+        * buld query data for datatble view and formatting data 
+        * @param  \Illuminate\Http\Request  $request
+        * @return \Illuminate\Http\Response
+    */
     public function table(Request $request)
     {
         $query = User::query();

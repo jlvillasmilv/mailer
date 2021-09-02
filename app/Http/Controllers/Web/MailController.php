@@ -14,6 +14,12 @@ use Yajra\DataTables\Facades\DataTables;
 class MailController extends Controller
 {
     /**
+        * @author Jorge Villasmil.
+        *
+        *Controller CRUD send mail
+    */
+
+    /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
@@ -52,7 +58,7 @@ class MailController extends Controller
         if (! Gate::allows('mails.create')) {
             return abort(401);
         }
-        
+
         $mail = new Mail;
         $mail->fill($request->all());
         $mail->user_id = auth()->user()->id;
@@ -65,6 +71,14 @@ class MailController extends Controller
             );
 
         $mail->mailAddress()->sync($addressee->id);
+
+        $details = [
+            'id'      => $mail->id,
+            'subject' => $mail->subject,
+            'body'    => $mail->body,
+        ];
+        //send mail
+        \Mail::to($addressee)->send(new \App\Mail\UserMail($details));
 
         $notification = array(
             'message'    => 'Correo enviado!',
@@ -129,6 +143,13 @@ class MailController extends Controller
         return response(null, 204);
     }
 
+    /**
+        * @author Jorge Villasmil.
+        *
+        * buld query data for datatble view
+        * @param  \Illuminate\Http\Request  $request
+        * @return \Illuminate\Http\Response
+    */
     public function table(Request $request)
     {
         $query = Mail::query();
@@ -138,13 +159,21 @@ class MailController extends Controller
             return ' <a href="'.route("mails.show", $dat->id).'" class="btn btn-sm btn-primary"><i class="fas fa-eye" title="Show: '.$dat->name.'"></i></a>
                 <button class="btn btn-sm btn-danger btn-delete" title="delete '.$dat->name.'" data-remote="'.route("mails.destroy", $dat->id).'"><i class="far fa-trash-alt"></i></button> ';
         })
-        ->editColumn('created_at', function ($users){
-            return date('d-m-y', strtotime($users->created_at) );
+        ->editColumn('created_at', function ($mail){
+            return date('d-m-y H:m', strtotime($mail->created_at) );
+        })
+        ->editColumn('status', function ($mail){
+            return $mail->status == 0 ? 'Por enviar' : 'enviado';
         })
         ->filterColumn('created_at', function ($query, $keyword) {
             $query->whereRaw("DATE_FORMAT(users.created_at,'%m/%d/%y') like ?", ["%$keyword%"]);
         })
-        ->rawColumns(['action'])
+        ->addColumn('email', function ($mail) {
+            return $mail->mailAddress->map(function($address) {
+                return $address->email;
+            })->implode('<br>');
+        })
+        ->rawColumns(['action','email'])
         ->make(true);
     }
 }

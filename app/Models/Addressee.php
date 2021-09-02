@@ -26,6 +26,7 @@ class Addressee extends Model
 
     public function mailAddress()
     {
+
         return $this->belongsToMany(Mail::class, 'addressees_mails', 'addressee_id', 'mail_id');
     }
 }

@@ -23,6 +23,12 @@ class Mail extends Model
 
     public function mailAddress()
     {
-        return $this->belongsToMany(Mail::class, 'addressees_mails', 'mail_id', 'addressee_id');
+        return $this->belongsToMany(Addressee::class, 'addressees_mails', 'mail_id', 'addressee_id');
+    }
+
+    public function address()
+    {
+        return $this->belongsToMany(Addressee::class, 'addressees_mails', 'mail_id', 'addressee_id')
+        ->select('addressees.email');
     }
 }

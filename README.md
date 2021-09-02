@@ -39,7 +39,7 @@ After you clone this project, do the following:
 
 9. php artisan serve 
    Visit http://127.0.0.1:8000 your browser
+   php artisan queue:work --daemon
 ````   
 ![Screenshot](doc/registration.jpg)   
 ![Screenshot](doc/login.jpg)   
-![Screenshot](doc/dashboard.jpg)   
