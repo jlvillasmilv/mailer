@@ -21,7 +21,7 @@
                 {{-- Configured sidebar links --}}
                 @can('users.index')
                 <li class="nav-item">
-                    <a href="{{ route('admin.users.index') }}" class="nav-link {{ request()->is('admin/events') || request()->is('admin/events/*') ? 'active' : '' }}">
+                    <a href="{{ route('admin.users.index') }}" class="nav-link {{ request()->is('admin/users') || request()->is('admin/users/*') ? 'active' : '' }}">
                         <i class="fas fa-users"></i>
                       <p class="ml-3">Usuarios</p>
                     </a>
@@ -30,7 +30,7 @@
 
                  @if(auth()->user()->hasRole('client'))
                     <li class="nav-item">
-                        <a href="{{ route('mails.index') }}" class="nav-link {{ request()->is('admin/events') || request()->is('admin/events/*') ? 'active' : '' }}">
+                        <a href="{{ route('mails.index') }}" class="nav-link {{ request()->is('mails') || request()->is('mails/*') ? 'active' : '' }}">
                             <i class="fa fa-envelope" aria-hidden="true"></i>
                         <p class="ml-3">Correos</p>
                         </a>

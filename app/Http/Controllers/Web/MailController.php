@@ -11,6 +11,8 @@ use App\Http\Requests\MailRequest;
 
 use Yajra\DataTables\Facades\DataTables;
 
+use Auth;
+
 class MailController extends Controller
 {
     /**
@@ -95,11 +97,17 @@ class MailController extends Controller
      * @param  \App\Models\Mail  $mail
      * @return \Illuminate\Http\Response
      */
-    public function show(Mail $mail)
+    public function show($id)
     {
+
         if (! Gate::allows('mails.show')) {
             return abort(401);
         }
+
+        $mail = Mail::where([
+            ['id', $id],
+            ['user_id', auth()->user()->id]
+        ])->firstorfail();
         
         return view('mails.show', compact('mail'));
     }
@@ -152,7 +160,7 @@ class MailController extends Controller
     */
     public function table(Request $request)
     {
-        $query = Mail::query();
+        $query = Mail::where('user_id','=', Auth::user()->id);
 
         return Datatables::of($query)->addColumn('action', function ($dat) {
 
@@ -166,7 +174,7 @@ class MailController extends Controller
             return $mail->status == 0 ? 'Por enviar' : 'enviado';
         })
         ->filterColumn('created_at', function ($query, $keyword) {
-            $query->whereRaw("DATE_FORMAT(users.created_at,'%m/%d/%y') like ?", ["%$keyword%"]);
+            $query->whereRaw("DATE_FORMAT(mails.created_at,'%m/%d/%y') like ?", ["%$keyword%"]);
         })
         ->addColumn('email', function ($mail) {
             return $mail->mailAddress->map(function($address) {

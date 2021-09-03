@@ -15,36 +15,36 @@
             <tbody>
                 <tr>
                     <th>
-                        Nombre
+                        Para
                     </th>
                     <td>
-                        {{ $user->name }}
-                    </td>
-                </tr>
-                <tr>
-                    <th>
-                       Correo
-                    </th>
-                    <td>
-                        {{ $user->email }}
-                    </td>
-                </tr>
-                <tr>
-                    <th>
-                        Roles
-                    </th>
-                    <td>
-                        @foreach($user->getRoleNames() as $id => $roles)
-                            <span class="label label-info label-many">{{ $roles }}</span>
+                        @foreach ($mail->mailAddress as $item)
+                            {{ $item->email }}
                         @endforeach
+                        
                     </td>
                 </tr>
+                <tr>
+                    <th>
+                        Asunto
+                    </th>
+                    <td>
+                        {{ $mail->subject }}
+                    </td>
+                </tr>
+
+                <tr>
+                    <td colspan="2">
+                        {{ $mail->body }}
+                    </td>
+                </tr>
+              
                 <tr>
                     <th>
                        Correos enviados
                     </th>
                     <td>
-                        {{ $user->mails->count() }}
+                        {{ $mail->created_at->diffForHumans() }}
                     </td>
                 </tr>
                 
